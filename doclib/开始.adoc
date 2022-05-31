@@ -1,0 +1,225 @@
+== 开始
+
+如果你正在开始使用Spring Boot，或一般的 "Spring"，请从阅读本节开始。它回答了 "什么？"、"如何？"和 "为什么？"等基本问题。它包括对Spring Boot的介绍，以及安装说明。然后，我们将引导您构建您的第一个Spring Boot应用程序，在此过程中，我们将讨论一些核心原则。
+
+=== 简单介绍
+
+Spring Boot帮助你创建可以运行的独立的、基于Spring的生产级应用程序。我们对Spring平台和第三方库采取了有主见的观点，这样你就能以最少的麻烦开始工作。大多数Spring Boot应用程序只需要很少的Spring配置
+
+你可以使用Spring Boot来创建Java应用程序，可以通过使用java -jar或更传统的war部署来启动。我们还提供了一个运行 "spring scripts "的命令行工具。
+
+我们的主要目标是：
+
+* 为所有的Spring开发提供更快、更广泛的入门体验
+* 要有主见，但当需求开始偏离默认值时，要迅速退出。
+* 提供一系列大类项目常见的非功能特性（如嵌入式服务器、安全、度量、健康检查和外部化配置）。
+* 绝对没有代码生成，也不需要XML配置。
+
+=== 系统要求
+
+Spring Boot 2.7.0需要Java 8，并兼容到Java 18，包括Java 18。还需要Spring Framework 5.3.20或以上版本。
+
+为以下构建工具提供了明确的构建支持
+
+|===
+|Build Tool|Version
+|Maven|3.5+
+|Grandle|6.8.x,6.9.x,7.x
+|===
+
+==== 包含的servlet容器
+
+|===
+|Name|ServletVersion
+|Tomcat9.0|4.0
+|jetty9.4|3.1
+|jetty10.0|4.0
+|undertow2.0|4.0
+|===
+
+你也可以将Spring Boot应用部署到任何兼容servlet 3.1+的容器中。
+
+=== 安装SpringBoot
+
+Spring Boot可以与 "经典 "Java开发工具一起使用，也可以作为命令行工具安装。 无论哪种方式，你都需要Java SDK v1.8或更高版本。在你开始之前，你应该使用以下命令检查你当前的Java安装。
+
+[source,bash]
+----
+ java -version
+----
+
+如果你是Java开发的新手，或者你想尝试使用Spring Boot，你可能想先试试Spring Boot CLI（命令行界面）。否则，请继续阅读 "经典 "安装说明
+
+====  Java开发工具的安装说明
+
+你可以以与任何标准Java库相同的方式使用Spring Boot。要做到这一点，在你的classpath上包括适当的spring-boot-*.jar文件。Spring Boot不需要任何特殊的工具集成，所以你可以使用任何IDE或文本编辑器。另外，Spring Boot应用程序没有任何特殊之处，所以你可以像运行其他Java程序一样运行和调试Spring Boot应用程序。
+
+虽然你可以复制Spring Boot的jar包，但我们一般建议你使用支持依赖性管理的构建工具（如Maven或Gradle）。
+
+*Maven*
+
+Spring Boot与Apache Maven 3.3或以上版本兼容。如果你还没有安装Maven，可以按照maven.apache.org上的说明进行。
+
+ps:在许多操作系统上，Maven可以用软件包管理器安装。如果你使用OSX的Homebrew，可以试试brew install maven。Ubuntu用户可以运行sudo apt-get install maven。使用Chocolatey的Windows用户可以在高位（管理员）提示下运行choco install maven
+
+Spring Boot的依赖项使用org.springframework.boot groupId。通常，你的Maven POM文件继承自spring-boot-starter-parent项目，并声明与一个或多个 "Starter "的依赖关系。Spring Boot还提供了一个可选的Maven插件，用于创建可执行jar包
+
+关于开始使用Spring Boot和Maven的更多细节，可以在Maven插件参考指南的入门部分找到。
+
+*Gradle*
+
+Spring Boot与Gradle 6.8、6.9和7.x兼容。如果你还没有安装Gradle，你可以按照gradle.org的说明来做。
+
+Spring Boot的依赖关系可以通过使用org.springframework.boot组来声明。通常情况下，你的项目会声明对一个或多个 "启动器 "的依赖关系。Spring Boot提供了一个有用的Gradle插件，可以用来简化依赖性声明和创建可执行的jar。
+
+关于开始使用Spring Boot和Gradle的更多细节，可以在Gradle插件参考指南的入门部分找到。
+
+==== 安装Spring Boot CLI  (Command Line Interface) 
+Spring Boot CLI（命令行界面）是一个命令行工具，你可以用它来快速建立Spring的原型。它允许你运行Groovy脚本，这意味着你有一个熟悉的Javalike语法，而没有那么多的模板代码。
+
+你不需要使用CLI来使用Spring Boot，但它是一种快速的方法，可以在没有IDE的情况下让Spring应用落地。
+
+*安装手册*
+
+你可以从Spring软件仓库下载Spring CLI发行版。
+下载后，按照解压后的档案中的INSTALL.txt说明操作。总之，在.zip文件的bin/目录下有一个spring脚本（Windows的spring.bat）。或者，你可以使用java -jar与.jar文件（该脚本帮助你确定classpath设置正确）
+
+ps:其他的就不翻了。。。没啥意义
+
+=== 开发你的第一个Spring Boot应用程序
+
+在此之前，要先确认java和maven符合版本要求
+
+====  创建pom
+
+我们需要先创建一个Maven pom.xml文件。pom.xml是用于构建项目的配方。打开你喜欢的文本编辑器，添加以下内容
+
+[source,xml]
+----
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.example</groupId>
+    <artifactId>myproject</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.7.0</version>
+    </parent>
+    <!-- Additional lines to be added here... -->
+</project>
+----
+
+前面的列表应该给你一个工作的构建。你可以通过运行mvn package来测试它（现在，你可以忽略 "jar将是空的 - 没有内容被标记为包含！"的警告）。
+
+====  添加classpath依赖项
+spring boot提供了一些启动器，可以把jar包添加到class path中。
+
+其他 "启动器 "提供了开发特定类型的应用程序时可能需要的依赖项。由于我们正在开发一个Web应用程序，我们添加一个spring-boot-starter-web依赖项。在此之前，我们可以通过运行下面的命令来看看我们目前拥有什么。
+[source,shell]
+$ mvn dependency:tree
+[INFO] com.example:myproject:jar:0.0.1-SNAPSHOT
+
+mvn dependency:tree命令打印出项目依赖关系的树状图。你可以看到spring-boot-starter-parent本身没有提供任何依赖关系。要添加必要的依赖，请编辑你的pom.xml，并在父部分下面添加spring-boot-starter-web依赖。
+
+[source,xml]
+----
+<dependencies>
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+</dependencies>
+----
+
+如果你再次运行mvn dependency:tree，你会看到现在有一些额外的依赖，包括Tomcat网络服务器和Spring Boot本身。
+
+==== 写代码
+
+为了完成我们的应用，我们需要创建一个单独的Java文件。默认情况下，Maven从src/main/java编译源代码，所以你需要创建该目录结构，然后添加一个名为src/main/java/MyApplication.java的文件，包含以下代码。
+[source,java]
+----
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@EnableAutoConfiguration
+public class MyApplication {
+
+    @RequestMapping("/")
+    String home() {
+        return "Hello World!";
+    }
+
+    public static void main(String[] args) {
+        SpringApplication.run(MyApplication.class, args);
+    }
+
+}
+----
+虽然这里的代码不多，但有相当多的事情要做。我们在接下来的几节中逐步介绍重要的部分。
+
+*@RestController和@RequestingMapping注解*
+
+我们的MyApplication类的第一个注解是@RestController。这被称为定型注解。它为阅读代码的人和Spring提供了提示，说明这个类扮演了一个特殊的角色。在本例中，我们的类是一个Web @Controller，所以Spring在处理传入的Web请求时考虑它。
+
+@RequestMapping注解提供了 "路由 "信息。它告诉Spring，任何带有/路径的HTTP请求都应该被映射到主页方法。@RestController注解告诉Spring将结果字符串直接渲染给调用者。
+
+*@EnableAutoConfiguration 注解*
+
+第二个类级注解是@EnableAutoConfiguration。这个注解告诉Spring Boot根据你添加的jar依赖项 "猜测 "你想如何配置Spring。由于spring-boot-starter-web添加了Tomcat和Spring MVC，自动配置会假定你正在开发一个Web应用，并相应地设置Spring。
+[note]
+====
+自动配置的设计是为了与 "启动器 "很好地合作，但这两个概念并不直接挂钩。你可以在 "启动器 "之外自由挑选jar依赖项。Spring Boot仍然会尽力自动配置你的应用程序。
+====
+*The "main" Method*
+
+我们应用程序的最后部分是main方法。这是一个标准的方法，遵循应用程序入口点的Java惯例。我们的main方法通过调用run委托给Spring Boot的SpringApplication类。SpringApplication引导我们的应用程序，启动Spring，而Spring又会启动自动配置的Tomcat网络服务器。我们需要将MyApplication.class作为参数传给run方法，以告诉SpringApplication哪个是主要的Spring组件。args数组也被传入，以显示任何命令行参数。
+
+==== 运行案例
+
+在这一点上，你的应用程序应该工作了。由于你使用了spring-boot-starter-parent POM，你有一个有用的运行目标，你可以用它来启动应用程序。在项目根目录下输入mvn spring-boot:run来启动应用程序。你应该看到类似以下的输出。
+----
+$ mvn spring-boot:run
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::  (v2.7.0)
+....... . . .
+....... . . . (log output here)
+....... . . .
+........ Started MyApplication in 2.222 seconds (JVM running for 6.514)
+----
+
+打开浏览器访问 "localhost:8080"   看到 hello world输出
+
+====  创建可执行jar包
+我们通过创建一个完全独立的可执行jar文件来完成我们的例子，我们可以在生产中运行。可执行的jar文件（有时称为 "fat jar"）是包含你的编译类以及你的代码运行所需的所有jar依赖项的档案。
+====
+Java没有提供一个标准的方法来加载嵌套的jar文件（jar文件本身包含在jar中）。如果你想发布一个独立的应用程序，这可能是个问题。
+
+为了解决这个问题，许多开发者使用 "uber "jar。uber jar将所有应用程序依赖的所有类打包成一个单一的存档。这种方法的问题是，很难看到哪些库在你的应用程序中。如果在多个jar中使用相同的文件名（但内容不同），也会产生问题。
+
+Spring Boot采取了一种不同的方法，让你直接嵌套jars。
+====
+为了创建一个可执行的jar，我们需要在pom.xml中添加spring-boot-maven-plugin。要做到这一点，请在依赖关系部分下面插入以下几行。
+----
+<build>
+    <plugins>
+        <plugin>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-maven-plugin</artifactId>
+        </plugin>
+    </plugins>
+</build>
+----
+===  下一步干啥
+希望本节提供了一些Spring Boot的基础知识，让你开始编写自己的应用程序。如果你是一个以任务为导向的开发者，你可能想跳到spring.io，跟随一些入门指南，解决 "我如何用Spring做这个？"的具体问题。我们也有针对Spring Boot的 "如何操作 "参考文档。
+
+否则，下一个合乎逻辑的步骤是阅读6.使用Spring Boot开发。如果你真的没有耐心，你也可以跳到前面去读Spring Boot的功能。

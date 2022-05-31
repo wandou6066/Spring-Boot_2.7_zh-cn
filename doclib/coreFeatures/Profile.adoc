@@ -1,0 +1,103 @@
+=== Profiles
+
+Spring Profiles提供了一种方法来隔离你的应用程序配置的一部分，并使其仅在某些环境中可用。任何@Component、@Configuration或@ConfigurationProperties都可以用@Profile来标记，以限制它被加载的时间，如下例所示。
+----
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
+
+@Configuration(proxyBeanMethods = false)
+@Profile("production")
+public class ProductionConfiguration {
+
+    // ...
+
+}
+
+----
+====
+如果@ConfigurationProperties bean是通过@EnableConfigurationProperties而不是自动扫描注册的，则需要在具有@EnableConfigurationProperties注释的@Configuration类上指定@Profile注释。在扫描@ConfigurationProperties的情况下，@Profile可以在@ConfigurationProperties类本身上指定。
+====
+
+你可以使用 spring.profiles.active 环境属性来指定哪些配置文件是活动的。你可以通过本章前面描述的任何方式来指定该属性。例如，你可以在你的application.properties中包含它，如下面的例子所示。
+
+[source,yml]
+----
+spring:
+  profiles:
+    active: "dev,hsqldb"
+----
+你也可以在命令行中使用以下开关指定它： --spring.profiles.active=dev,hsqldb。
+
+如果没有激活配置文件，就会启用一个默认的配置文件。默认配置文件的名称是default，可以使用spring.profiles.default环境属性对其进行调整，如下面的例子所示。
+----
+spring:
+  profiles:
+    default: "none"
+
+----
+
+spring.profiles.active 和 spring.profiles.default 只能用于非配置文件的文件。这意味着它们不能包含在配置文件特定的文件或由spring.config.activate.on-profile激活的文件中。
+
+例如，第二个文件配置是无效的。
+
+----
+# this document is valid
+spring:
+  profiles:
+    active: "prod"
+---
+# this document is invalid
+spring:
+  config:
+    activate:
+      on-profile: "prod"
+  profiles:
+    active: "metrics"
+
+----
+
+==== Adding Active Profile
+
+spring.profiles.active属性遵循与其他属性相同的排序规则。最高的PropertySource获胜。这意味着你可以在application.properties中指定活动配置文件，然后通过使用命令行开关来替换它们。
+
+有时，拥有增加到活动配置文件而不是替换它们的属性是很有用的。spring.profiles.include 属性可用于在 spring.profiles.active 属性激活的配置文件之上添加活动配置文件。SpringApplication入口点也有一个Java API用于设置额外的配置文件。参见SpringApplication中的setAdditionalProfiles()方法。
+
+例如，当一个具有以下属性的应用程序被运行时，即使它使用--spring.profiles.active开关运行，common和local配置文件也会被激活。
+
+----
+spring:
+  profiles:
+    include:
+      - "common"
+      - "local"
+
+----
+====
+与spring.profiles.active类似，spring.profiles.include只能用于非配置文件的文件。这意味着它不能被包含在配置文件特定的文件或由spring.config.activated.on-profile激活的文件中。
+====
+如果一个给定的配置文件是活动的，配置文件组，在下一节中描述，也可以用来添加活动的配置文件。
+
+==== Profile Groups
+
+偶尔，你在你的应用程序中定义和使用的配置文件过于细化，使用起来也很麻烦。例如，你可能有proddb和prodmq配置文件，用于独立启用数据库和消息传递功能。
+
+为了帮助解决这个问题，Spring Boot允许你定义配置文件组。配置文件组允许你为相关的配置文件组定义一个逻辑名称。
+
+例如，我们可以创建一个生产组，由我们的proddb和prodmq配置文件组成。
+----
+spring:
+  profiles:
+    group:
+      production:
+      - "proddb"
+      - "prodmq"
+
+----
+现在可以使用 --spring.profiles.active=production 来启动我们的应用程序，以便一次性激活production、proddb和prodmq配置文件。
+
+====  程序化设置Profile
+
+你可以在应用运行前通过调用SpringApplication.setAdditionalProfiles(...)以编程方式设置活动配置文件。也可以通过使用Spring的ConfigurableEnvironment接口来激活配置文件。
+
+==== 特定的配置文件
+application.properties（或application.yml）和通过@ConfigurationProperties引用的文件的特定配置文件变体都被视为文件并被加载。详见 "配置文件特定文件"。

@@ -1,0 +1,12 @@
+== 核心功能
+
+本节深入介绍了Spring Boot的细节。在这里，你可以了解到你可能想要使用和定制的关键功能。如果你还没有这样做，你可能想阅读 "入门 "和 "使用Spring Boot开发 "部分，这样你就有了良好的基础知识。
+
+
+include::coreFeatures/SpringApplication.adoc[]
+
+include::coreFeatures/ExternalizedConfiguration.adoc[]
+
+include::coreFeatures/Profile.adoc[]
+
+include::coreFeatures/Logging.adoc[]

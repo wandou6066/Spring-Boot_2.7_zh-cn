@@ -1,0 +1,26 @@
+== 升级SpringBoot
+关于如何从Spring Boot的早期版本升级的说明，在项目的wiki上提供。按照发行说明部分的链接，找到你要升级的版本。
+
+升级说明总是在发行说明中的第一项。如果你落后一个以上的版本，请确保你也查看你跳过的版本的发布说明。
+
+=== 从1.x升级
+如果你要从Spring Boot的1.x版本升级，请查看项目wiki上的 "迁移指南"，其中提供了详细的升级说明。还可以查看 "发布说明"，了解每个版本的 "新的和值得注意的 "功能列表。
+
+=== 升级到新功能版本
+在升级到新的功能版本时，一些属性可能已经被重新命名或删除。Spring Boot提供了一种方法，可以在启动时分析你的应用程序的环境并打印诊断结果，但也可以在运行时为你临时迁移属性。要启用该功能，请在你的项目中添加以下依赖关系。
+
+----
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-properties-migrator</artifactId>
+    <scope>runtime</scope>
+</dependency>
+----
+[import]
+====
+在环境中添加得较晚的属性，例如使用@PropertySource时，将不会被考虑在内。
+====
+====
+一旦你完成了迁移，请确保从你的项目的依赖中删除这个模块。
+====
+
